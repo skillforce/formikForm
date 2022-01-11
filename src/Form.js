@@ -1,6 +1,28 @@
-import {useFormik, validateYupSchema} from "formik";
+import {ErrorMessage, Field, Form, Formik, useField} from "formik";
 import * as Yup from 'yup';
-import {Formik, Form, Field, ErrorMessage} from 'formik';
+
+const MyTextInput = ({label, ...props}) => {
+    const [field, meta] = useField(props)
+    return (
+        <>
+            <label htmlFor={props.name}>{label}</label>
+            <input {...props} {...field}/>
+            {meta.touched && meta.error && <div className={'error'}>{meta.error}</div>}
+        </>
+
+    )
+}
+const MyCheckBox = ({children, ...props}) => {
+    const [field, meta] = useField({...props, type: 'checkbox'})
+    return (
+        <>
+            <label className={'checkbox'}>
+                <input type="checkbox" {...props} {...field}/>
+                {children}
+            </label>
+            {meta.touched && meta.error && <div className={'error'}>{meta.error}</div>}
+        </>)
+}
 
 
 const FormTablet = () => {
@@ -39,30 +61,9 @@ const FormTablet = () => {
             {({isSubmitting}) => (
                 <Form className="form">
                     <h2>Отправить пожертвование</h2>
-
-                    <label htmlFor="name">Your name</label>
-                    <Field type="text"
-                           name="name"
-                           id='name'/>
-                    <ErrorMessage name="name"
-                                  component="div"
-                                  className={'error'}/>
-
-                    <label htmlFor="email">Your email</label>
-                    <Field type="email"
-                           name="email"
-                           id='email'/>
-                    <ErrorMessage name="email"
-                                  component="div"
-                                  className={'error'}/>
-
-                    <label htmlFor="amount">Quantity</label>
-                    <Field type="number"
-                           name="amount"
-                           id='amount'/>
-                    <ErrorMessage name="amount"
-                                  component="div"
-                                  className={'error'}/>
+                    <MyTextInput label={'Your name'} type={'text'} name={'name'} id={'name'}/>
+                    <MyTextInput label={'Your email'} type={'email'} name={'email'} id={'email'}/>
+                    <MyTextInput label={'Quantity'} type={'number'} name={'amount'} id={'amount'}/>
 
                     <label htmlFor="currency">Валюта</label>
                     <Field
@@ -80,20 +81,16 @@ const FormTablet = () => {
                                   className={'error'}/>
 
 
-                    <label htmlFor="text">Ваше сообщение</label>
-                    <Field type="text" name="text" id='text'/>
+                    <label htmlFor="text">Your message</label>
+                    <Field as={'textarea'} type="text" name="text" id='text'/>
                     <ErrorMessage name="text" component="div"/>
 
-                    <label className="checkbox">
-                        <Field
-                            name="terms"
-                            id={'checkbox'}
-                            type="checkbox"/>
+
+                    <MyCheckBox name="terms"
+                                id={'checkbox'}>
                         I agree with the privacy policy
-                    </label>
-                    <ErrorMessage name="terms"
-                                  component="div"
-                                  className={'error'}/>
+                    </MyCheckBox>
+
                     <button type="submit">Отправить</button>
                 </Form>
             )}
